@@ -5,6 +5,7 @@
 #include "EventBuffer/EventBuffer.h"
 #include "EventBuffer/EventBufferRecycle.h"
 #include "DBThread/DBThreadMgr.h"
+#include "RoSpace/RoTimer.h"
 
 namespace chess
 {
@@ -121,7 +122,8 @@ private:
     UINT m_uConnIndex;         // 用户在用户管理器 && 网络库 的链接索引
     bool m_bIsLogined;              // 是否已经登陆
     std::string m_strUserName; // 用户名
-    time_t     m_xLastHeartTime; // 最后一次心跳的时间(s)
+
+    CTimer m_timerHeartBeat; // 心跳检测计时器
 };
 
 }

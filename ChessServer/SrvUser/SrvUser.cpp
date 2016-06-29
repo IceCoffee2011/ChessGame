@@ -1,3 +1,4 @@
+#include <string.h>
 #include "SrvUser.h"
 #include "SrvUserMgr.h"
 #include "RoLog/RoLog.h"
@@ -5,9 +6,9 @@
 #include "Protol/CSProtol.h"
 #include "Protol/CSProtol.Parser.hpp"
 #include "Protol/CSProtol.Serialize.hpp"
-#include <string.h>
 #include "DBThread/DBThreadMgr.h"
 #include "ChessGame/ChessGame.h"
+#include "SrvConfig/CSrvConfig.h"
 
 namespace chess
 {
@@ -35,6 +36,7 @@ void CSrvUser::Reset()
 {
     m_bIsValid = false;
     m_bIsLogined = false;
+    m_timerHeartBeat.Stop ();
 }
 
 void CSrvUser::SetValid()
@@ -83,13 +85,15 @@ void CSrvUser::OnRecvData(const char *pBuffer, UINT uBufferBytes)
 
 void CSrvUser::OnAcceptOK()
 {
-    m_xLastHeartTime = time(NULL);
+    m_timerHeartBeat.ReStart ( g_pSrvConfig->GetHeartBeatOverTime () );
 }
 
 void CSrvUser::ReverseDelete()
 {
     if ( m_bIsValid )
     {
+        m_timerHeartBeat.Stop ();
+
         g_pSrvUserMgr->ReverseDeleteUser ( m_uConnIndex );
 
         if ( m_bIsLogined )

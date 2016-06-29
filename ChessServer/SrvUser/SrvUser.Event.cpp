@@ -60,12 +60,14 @@ void CSrvUser::ProcessEvent(SEventBuffer *pEventBuffer)
 
 void CSrvUser::CheckHeartBeat()
 {
-    int iHeartBeatOverTime = g_pSrvConfig->GetHeartBeatOverTime() ;
-
-    if ( time(NULL) - m_xLastHeartTime > iHeartBeatOverTime )
+    if ( m_timerHeartBeat.IsTimeout () )
     {
-        START_LOG(RO_CERR).BUILD_LOG( time(NULL) - m_xLastHeartTime)
-                .OUT_LOG("HeartBeat time over !") .BUILD_LOG(m_strUserName).BUILD_LOG(m_uConnIndex).END_LOG();
+        START_LOG(RO_CERR)
+                .OUT_LOG("HeartBeat time over !")
+                .BUILD_LOG(m_strUserName)
+                .BUILD_LOG(m_uConnIndex)
+                .END_LOG();
+
         ReverseDelete ();
     }
 }
@@ -306,14 +308,15 @@ void CSrvUser::On_SC_PUSH_JIANGJU(SEventBuffer *pEventBuffer)
 
 void CSrvUser::On_CS_HEART_BEAT()
 {
-    m_xLastHeartTime = time(NULL);
+    m_timerHeartBeat.ReStart ( );
+
     chess::SendData(m_uConnIndex, SC_HEART_BEAT_ACK);
 }
 
 void CSrvUser::OnLoginOK()
 {
     m_bIsLogined = true;
-    m_xLastHeartTime = time(NULL);
+
     g_pSrvUserMgr->AddLoginUser (this);
 
     SSC_USER_LOGINED xLoginedUsers;
