@@ -49,6 +49,8 @@ private :
 
 private:
     UINT m_uThreadIndex;
+    UINT m_uRetrySleepSeconds;
+    UINT m_uRetryMaxCount;
     MySQLConnection *m_xConn;
 };
 }

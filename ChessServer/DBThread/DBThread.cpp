@@ -20,6 +20,8 @@ CDBThread::~CDBThread()
 bool CDBThread::Init (unsigned uThreadIndex)
 {
     m_uThreadIndex = uThreadIndex;
+    m_uRetrySleepSeconds = g_pSrvConfig->GetDBRetrySleepSeconds();
+    m_uRetryMaxCount = g_pSrvConfig->GetDBRetryMaxCount();
 
     CSrvConfig::_SMySQLConn const& xConnInfo = g_pSrvConfig->GetMySQLConn ();
 
@@ -28,7 +30,7 @@ bool CDBThread::Init (unsigned uThreadIndex)
                       xConnInfo.m_strUser,
                       xConnInfo.m_strPassword,
                       xConnInfo.m_strDatabase);
-    return m_xConn->IsConnected ();
+    return m_uRetrySleepSeconds > 0 && m_xConn->IsConnected ();
 }
 
 }

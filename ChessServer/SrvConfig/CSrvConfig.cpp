@@ -45,6 +45,12 @@ bool CSrvConfig::Init(const char *szFileName)
     m_uDBThreadCount = file.getIntValue (strSection, "ThreadCount", ret);
     CHECK_RET( ret );
 
+    m_uDBRetrySleepSeconds = file.getIntValue (strSection, "RetrySleepSeconds", ret);
+    CHECK_RET( ret );
+
+    m_uDBRetryMaxCount = file.getIntValue (strSection, "RetryMaxCount", ret);
+    CHECK_RET( ret );
+
     m_xMySQLConn.m_strDatabase = file.getStringValue (strSection, "Database", ret);
     CHECK_RET( ret );
 

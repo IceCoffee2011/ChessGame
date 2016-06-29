@@ -31,6 +31,8 @@ public:
     _SMySQLConn const& GetMySQLConn() const { return m_xMySQLConn; }
     int       GetHeartBeatOverTime() const { return m_iHeartBeatOverTime; }
     UINT      GetCheckHeartBeatSeconds() const { return m_uCheckHeartBeatSeconds; }
+    UINT      GetDBRetrySleepSeconds() const { return m_uDBRetrySleepSeconds; }
+    UINT      GetDBRetryMaxCount() const { return m_uDBRetryMaxCount; }
 private:
     UINT        m_uMaxUserCount;  // 最大用户数目
     USHORT      m_uListenPort;    // 监听端口
@@ -38,6 +40,8 @@ private:
     int         m_iHeartBeatOverTime; // 心跳包超时秒数
     UINT        m_uCheckHeartBeatSeconds; // 检查心跳包的周期
     UINT        m_uDBThreadCount;// 数据库线程数目
+    UINT        m_uDBRetrySleepSeconds; // 数据库被断开后的重试休眠时间
+    UINT        m_uDBRetryMaxCount; // 数据库重试次数
     _SMySQLConn m_xMySQLConn; // 数据库链接信息
 };
 #define g_pSrvConfig chess::CSrvConfig::Instance ()

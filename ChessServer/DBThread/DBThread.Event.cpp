@@ -8,14 +8,13 @@
 #include <string.h>
 #include <mysql/errmsg.h>
 #include <thread>
+#include <signal.h>
+#include <sys/types.h>
 
 namespace chess
 {
 void CDBThread::ProcessEvent(SEventBuffer *pEventBuffer)
 {
-    int iRetryCount = 0;
-    const int iMaxRetry = 3;
-
 begin_flag :
     switch ( pEventBuffer->m_uEventType )
     {
@@ -33,30 +32,26 @@ begin_flag :
                 .BUILD_LOG(pEventBuffer->m_uEventType).END_LOG();
     }
 
-    // 如果发现服务器断开啦
+    // 如果发现数据库服务器断开链接啦
     if ( m_xConn->GetLastErrorNo () == CR_SERVER_GONE_ERROR )
     {
-        if ( m_xConn->Ping () )
+        unsigned uRetryCount = 0;
+
+        while ( m_xConn->Ping () == false && uRetryCount < m_uRetryMaxCount )
         {
-            ++ iRetryCount;
-            if ( iRetryCount <= iMaxRetry )
-            {
-                goto begin_flag;
-            }
-            else
-            {
-                START_LOG(RO_CERR)
-                        .BUILD_LOG(pEventBuffer->m_uTraceID)
-                        .BUILD_LOG(pEventBuffer->m_uEventType)
-                        .OUT_LOG("Retry to max !")
-                        .END_LOG();
-            }
+            std::this_thread::sleep_for(std::chrono::seconds(m_uRetrySleepSeconds));
+        }
+
+        if ( uRetryCount >= m_uRetryMaxCount )
+        {
+            START_LOG(RO_CERR)
+                    .OUT_LOG("Retry max to connect db "
+                             ", server exit !").END_LOG();
+            raise(SIGINT);
         }
         else
         {
-            START_LOG(RO_CERR)
-                    .BUILD_LOG(pEventBuffer->m_uTraceID)
-                    .END_LOG();
+            goto begin_flag;
         }
     }
 
@@ -72,13 +67,16 @@ void CDBThread::On_CS_LOGIN(SEventBuffer *pEventBuffer)
     query.setString (1, pLogin->m_szUserName);
     query.setString (2, pLogin->m_szPassword);
 
+    SSC_LOGIN_ACK xLoginACK;
+
+    memcpy (xLoginACK.m_szUserName, pLogin->m_szUserName,
+            sizeof(xLoginACK.m_szUserName));
+    xLoginACK.m_uLoginResult = SSC_LOGIN_ACK::UNKOWN_ERROR;
+
     if ( query.ExecuteQuery () )
     {
         int ret = query.getInt (1, 0);
-        SSC_LOGIN_ACK xLoginACK;
 
-        memcpy (xLoginACK.m_szUserName, pLogin->m_szUserName,
-                sizeof(xLoginACK.m_szUserName));
         if ( ret == 0 )
         {
             xLoginACK.m_uLoginResult = SSC_LOGIN_ACK::LOGIN_OK;
@@ -87,13 +85,10 @@ void CDBThread::On_CS_LOGIN(SEventBuffer *pEventBuffer)
         {
             xLoginACK.m_uLoginResult = SSC_LOGIN_ACK::PASSWORD_ERROR;
         }
-        PutEventToUserMgr(pEventBuffer->m_uTraceID,
-                          SC_LOGIN_ACK, xLoginACK);
     }
-    else
-    {
-        START_LOG(RO_CERR).END_LOG();
-    }
+
+    PutEventToUserMgr(pEventBuffer->m_uTraceID,
+                      SC_LOGIN_ACK, xLoginACK);
 }
 
 void CDBThread::On_CS_REGISTER(SEventBuffer *pEventBuffer)
@@ -104,13 +99,15 @@ void CDBThread::On_CS_REGISTER(SEventBuffer *pEventBuffer)
     query.setString (1, pRegister->m_szUserName);
     query.setString (2, pRegister->m_szPassword);
 
+    SSC_REGISTER_ACK xRegisterACK;
+    memcpy (xRegisterACK.m_szUserName, pRegister->m_szUserName,
+            sizeof(pRegister->m_szUserName));
+    xRegisterACK.m_uRegisterResult = SSC_REGISTER_ACK::UNKOWN_ERROR;
+
     if ( query.ExecuteQuery () )
     {
         int ret = query.getInt (1, 0);
 
-        SSC_REGISTER_ACK xRegisterACK;
-        memcpy (xRegisterACK.m_szUserName, pRegister->m_szUserName,
-                sizeof(pRegister->m_szUserName));
         if ( ret == 0 )
         {
             xRegisterACK.m_uRegisterResult = SSC_REGISTER_ACK::REGISTER_OK;
@@ -119,15 +116,11 @@ void CDBThread::On_CS_REGISTER(SEventBuffer *pEventBuffer)
         {
             xRegisterACK.m_uRegisterResult = SSC_REGISTER_ACK::USERNAME_EXISTS;
         }
+    }
 
-        PutEventToUserMgr(pEventBuffer->m_uTraceID,
-                          SC_REGISTER_ACK,
-                          xRegisterACK);
-    }
-    else
-    {
-        START_LOG(RO_CERR).END_LOG();
-    }
+    PutEventToUserMgr(pEventBuffer->m_uTraceID,
+                      SC_REGISTER_ACK,
+                      xRegisterACK);
 }
 
 void CDBThread::On_SD_SAVE_MSG(SEventBuffer *pEventBuffer)
