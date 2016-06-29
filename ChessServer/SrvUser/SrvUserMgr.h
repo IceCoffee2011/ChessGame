@@ -7,6 +7,7 @@
 #include <queue>
 #include <mutex>
 #include <unordered_set>
+#include "RoSpace/RoTimer.h"
 
 namespace chess
 {
@@ -25,9 +26,10 @@ public:
     /**
      * @brief Init 初始化用户管理器
      * @param uMaxUserCount 最到用户数量
+     * @param uCheckHeartBeatSeconds 检查心跳包的计时器秒数
      * @return true -> 初始化成功, false -> 初始化失败
      */
-    bool Init(UINT uMaxUserCount);
+    bool Init(UINT uMaxUserCount, unsigned uCheckHeartBeatSeconds);
 
     /**
      * @brief GetUserPtr 从用户池中获取一个用户指针
@@ -53,6 +55,7 @@ public:
      *  1. 检查心跳
      *  2. 删除预约断开的所有用户
      *  3. 处理需要写到用户的事件
+     *  4. 推送本次逻辑处理新登陆和断开了链接的用户列表给在线用户
      */
     void LogicTick();
 
@@ -152,6 +155,9 @@ private:
 private:
     CSrvUser* m_xUserPool; // 用户池
     UINT          m_uUserPoolSize; // 用户池容量
+
+    CTimer m_timerCheckHeartHeat; // 检查心跳包的计时器
+
     std::unordered_set<CSrvUser*> m_usetValidUser; // 有效用户, 用于快速遍历
     std::unordered_set<CSrvUser*> m_usetLoginedUser; // 登陆了的用户, 用于快速遍历
     std::vector<UINT>         m_vecReverseDeleteUsers; // 预约删除的用户

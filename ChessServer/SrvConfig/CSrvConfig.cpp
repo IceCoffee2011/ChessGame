@@ -37,6 +37,9 @@ bool CSrvConfig::Init(const char *szFileName)
     m_iHeartBeatOverTime = file.getIntValue (strSection, "HeartBeatOverTime", ret);
     CHECK_RET(ret);
 
+    m_uCheckHeartBeatSeconds = file.getIntValue (strSection, "CheckHeartBeatSeconds", ret);
+    CHECK_RET(ret);
+
     strSection = "MySQL";
 
     m_uDBThreadCount = file.getIntValue (strSection, "ThreadCount", ret);

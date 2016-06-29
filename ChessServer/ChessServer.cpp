@@ -43,7 +43,8 @@ void CChessServer::SetupSignals()
 bool CChessServer::InitAll()
 {
     return g_pSrvConfig->Init ("./chess_config.ini") &&
-            g_pSrvUserMgr->Init ( g_pSrvConfig->GetMaxUserCount () ) &&
+            g_pSrvUserMgr->Init ( g_pSrvConfig->GetMaxUserCount (),
+                                  g_pSrvConfig->GetCheckHeartBeatSeconds ()) &&
             g_pDBThreadMgr->Init ()&&
             InitNetworkLib() ;
 }

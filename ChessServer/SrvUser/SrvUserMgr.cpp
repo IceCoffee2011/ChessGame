@@ -24,7 +24,7 @@ CSrvUserMgr::~CSrvUserMgr ()
     SAFE_DELETE_ARRAY( m_xUserPool );
 }
 
-bool CSrvUserMgr::Init(UINT uMaxUserCount)
+bool CSrvUserMgr::Init(UINT uMaxUserCount, unsigned uCheckHeartBeatSeconds)
 {
     if ( m_xUserPool )
     {
@@ -39,6 +39,8 @@ bool CSrvUserMgr::Init(UINT uMaxUserCount)
     {
         m_xUserPool[ uConnIndex ].SetConnIndex ( uConnIndex );
     }
+
+    m_timerCheckHeartHeat.ReStart ( uCheckHeartBeatSeconds );
 
     return true;
 }
@@ -135,9 +137,14 @@ void CSrvUserMgr::RemoveLoginedUser(CSrvUser *pUser)
 
 void CSrvUserMgr::CheckUserHeartBeat()
 {
-    for(CSrvUser* pUser : m_usetValidUser)
+    if ( m_timerCheckHeartHeat.IsTimeout () )
     {
-        pUser->CheckHeartBeat();
+        m_timerCheckHeartHeat.ReStart ();
+
+        for(CSrvUser* pUser : m_usetValidUser)
+        {
+            pUser->CheckHeartBeat();
+        }
     }
 }
 

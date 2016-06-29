@@ -30,11 +30,13 @@ public:
     UINT       GetDBThreadCount() const { return m_uDBThreadCount; }
     _SMySQLConn const& GetMySQLConn() const { return m_xMySQLConn; }
     int       GetHeartBeatOverTime() const { return m_iHeartBeatOverTime; }
+    UINT      GetCheckHeartBeatSeconds() const { return m_uCheckHeartBeatSeconds; }
 private:
     UINT        m_uMaxUserCount;  // 最大用户数目
-    USHORT  m_uListenPort;          // 监听端口
+    USHORT      m_uListenPort;    // 监听端口
     UINT        m_uRecvBufferByte; // 接收缓冲区大小
-    int            m_iHeartBeatOverTime; // 心跳包超时秒数
+    int         m_iHeartBeatOverTime; // 心跳包超时秒数
+    UINT        m_uCheckHeartBeatSeconds; // 检查心跳包的周期
     UINT        m_uDBThreadCount;// 数据库线程数目
     _SMySQLConn m_xMySQLConn; // 数据库链接信息
 };
