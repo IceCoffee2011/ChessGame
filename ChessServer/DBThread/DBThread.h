@@ -6,7 +6,7 @@
 #include "EventBuffer/EventBuffer.h"
 #include "SrvUser/SrvUserMgr.h"
 
-class MySQLConnection;
+class sqlite3;
 
 namespace chess
 {
@@ -49,7 +49,7 @@ private :
 
 private:
     UINT m_uThreadIndex;
-    MySQLConnection *m_xConn;
+    sqlite3 *m_pDB;
 };
 }
 #endif // DBTHREAD_H

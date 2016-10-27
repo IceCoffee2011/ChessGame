@@ -100,27 +100,7 @@ void Login::readingBoxStatus()
     ui->rememberpasswordBox->setChecked(checkBoxStatus);
     file.close();
 }
-//void Login::judgeLoginSuccess(const chess::SSC_LOGIN_ACK &login) {
-//    switch (login.m_uLoginResult) {
-//    case chess::SSC_LOGIN_ACK::LOGIN_OK :
-//        {
-//        QMessageBox::information(this,NULL,trUtf8("登录成功！！"),QMessageBox::Ok);
-//        playgame * play = new playgame;
 
-//        disconnect(socket_, SIGNAL(readyRead()),
-//                   this, SLOT(slot_socket_readyRead()) );
-//        play->setSocket(socket_);
-//        play->SetCurrentUserName(ui->userEdit->text());
-//        play->show();
-//        close();
-//    }
-//        break;
-//    default:
-//        QMessageBox::information(this,NULL,trUtf8("登录失败！！"),QMessageBox::Ok);
-//        break;
-//    }
-
-//}
 void Login::on_loginButton_clicked()
 {
     username_ = ui->userEdit->text();
@@ -144,11 +124,11 @@ void Login::on_loginButton_clicked()
         rememberUsername();
         rememberPassword();
     }
+    close();
 
     playgame * play = new playgame;
     play->setUserInfo(username_,password_);
     play->show();
-    close();
 }
 void Login::on_registerButton_clicked()
 {

@@ -8,7 +8,7 @@
 #include "SrvUser/SrvUserMgr.h"
 #include "SrvUser/SrvUser.h"
 
-#define GET_USERNAME( uConnIndex ) g_pSrvUserMgr->GetValidUserPtr (uConnIndex)->GetUserName ().c_str ()
+#define GET_USERNAME( uConnIndex ) g_pSrvUserMgr->GetValidUserPtr (uConnIndex)->GetUsername ().c_str ()
 
 namespace chess
 {
@@ -18,7 +18,7 @@ void CChessGame::Net_PushTakeSiteResult(UINT uOprateUser, EPieceTeam xTeam, ETak
     SEventBuffer *pEventBuffer = g_pEventBufferRecycle->GetInvalidEventBuffer ();
     struct SSC_TAKESITE_ACK xTakeSiteACK;
 
-    strncpy (xTakeSiteACK.m_szUserName, g_pSrvUserMgr->GetUserPtr (uOprateUser)->GetUserName ().c_str (),
+    strncpy (xTakeSiteACK.m_szUserName, g_pSrvUserMgr->GetUserPtr (uOprateUser)->GetUsername ().c_str (),
              sizeof( xTakeSiteACK.m_szUserName ) );
     xTakeSiteACK.m_uDestSite = static_cast<UINT>(xTeam);
     xTakeSiteACK.m_uTakeSiteResult = static_cast<UINT>( xResult );
@@ -71,7 +71,7 @@ void CChessGame::Net_PushMovePieceResult(UINT uConnIndex, CPoint const& xFrom,
     SEventBuffer* pEventBuffer = g_pEventBufferRecycle->GetInvalidEventBuffer ();
     struct SSC_MOVE_PIECE_ACK xMovePieceAck;
 
-    strncpy (xMovePieceAck.m_szUserName, g_pSrvUserMgr->GetUserPtr (uConnIndex)->GetUserName ().c_str (),
+    strncpy (xMovePieceAck.m_szUserName, g_pSrvUserMgr->GetUserPtr (uConnIndex)->GetUsername ().c_str (),
              sizeof( xMovePieceAck.m_szUserName) );
     xMovePieceAck.m_uMoveResult = static_cast<UINT>(xError);
     xMovePieceAck.m_xFrom.m_iLine = xFrom.GetLine ();

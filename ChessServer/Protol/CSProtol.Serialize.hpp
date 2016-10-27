@@ -1,8 +1,15 @@
 #ifndef CSPROTOL_SERIALIZE_HPP
 #define CSPROTOL_SERIALIZE_HPP
+#ifdef WIN32
+#include <winsock2.h>
+#else
+#include <arpa/inet.h>
+#endif
 
 #include "CSProtol.h"
-#include <arpa/inet.h>
+
+
+
 #include <cereal/cereal.hpp>
 #include <cereal/types/string.hpp>
 #include <cereal/archives/json.hpp>

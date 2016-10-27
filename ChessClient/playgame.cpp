@@ -628,11 +628,7 @@ void playgame::slot_socket_error(QAbstractSocket::SocketError)
 
     QMessageBox::about(this, trUtf8("与服务器连接已断开"), trUtf8("服务器断开了连接 !"));
 
-    Login *login = new Login();
-
-    login->show();
-
-    deleteLater();
+    this->close();
 }
 
 void playgame::slot_socket_connected()

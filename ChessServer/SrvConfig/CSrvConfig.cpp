@@ -37,24 +37,9 @@ bool CSrvConfig::Init(const char *szFileName)
     m_iHeartBeatOverTime = file.getIntValue (strSection, "HeartBeatOverTime", ret);
     CHECK_RET(ret);
 
-    strSection = "MySQL";
+    strSection = "SQLITE";
 
-    m_uDBThreadCount = file.getIntValue (strSection, "ThreadCount", ret);
-    CHECK_RET( ret );
-
-    m_xMySQLConn.m_strDatabase = file.getStringValue (strSection, "Database", ret);
-    CHECK_RET( ret );
-
-    m_xMySQLConn.m_strHost = file.getStringValue (strSection, "Host", ret);
-    CHECK_RET( ret);
-
-    m_xMySQLConn.m_uPort = file.getIntValue (strSection, "Port", ret);
-    CHECK_RET( ret);
-
-    m_xMySQLConn.m_strUser = file.getStringValue (strSection, "User", ret);
-    CHECK_RET ( ret );
-
-    m_xMySQLConn.m_strPassword = file.getStringValue (strSection, "Password", ret);
+    m_strDBfilename = file.getStringValue (strSection, "file", ret);
     CHECK_RET( ret );
 
     return true;

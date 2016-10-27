@@ -3,8 +3,9 @@
 #include "RoSpace/RoTools.h"
 
 #include <event2/bufferevent.h>
-#include <event.h>
+#include <event2/event.h>
 #include <event2/listener.h>
+#include <event2/buffer.h>
 
 namespace RoNetPrivate
 {
@@ -218,7 +219,7 @@ void CRoNetMgr::_OnTimer(int, short, void *)
 void CRoNetMgr::OnRead (UINT uConnIndex)
 {
     _SRoNetUser& user = m_vecRoNetUsers[ uConnIndex ];
-    auto evb = user.GetBufferEvent ()->input;
+    auto evb = bufferevent_get_input( user.GetBufferEvent () );
     size_t uBytesAvaliable = evbuffer_get_length ( evb );
 
     // 应该接收数据头部信息
@@ -392,7 +393,7 @@ bufferevent *CRoNetMgr::DoSetupNewBufferevent(int fd, void *arg)
         return NULL;
     }
 
-    bufferevent_settimeout (bev, 0, 3);
+//    bufferevent_settimeout (bev, 0, 3);
 
     bufferevent_setwatermark (bev, EV_READ, 0, m_uRecvBufferByte);
     bufferevent_setcb (bev, _OnBevRead, NULL, _OnBevError, arg) ;

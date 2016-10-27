@@ -71,10 +71,10 @@ public:
     void ProcessEvent(SEventBuffer* pEventBuffer);
 
     /**
-     * @brief GetUserName 获取用户名
+     * @brief GetUsername 获取用户名
      * @return 用户名
      */
-    std::string const& GetUserName() const
+    std::string const& GetUsername() const
     {
         return m_strUserName;
     }

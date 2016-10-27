@@ -103,9 +103,9 @@ void CSrvUserMgr::QueueEvent(SEventBuffer *pEventBuffer)
 void CSrvUserMgr::AddLoginUser(CSrvUser *pUser)
 {
     m_usetLoginedUser.insert (pUser);
-    m_usetLoginedUserName.insert (pUser->GetUserName ());
-    m_usetLoginedThisTime.insert (pUser->GetUserName ());
-    m_usetDisconnectedThisTime.erase (pUser->GetUserName ());
+    m_usetLoginedUserName.insert (pUser->GetUsername ());
+    m_usetLoginedThisTime.insert (pUser->GetUsername ());
+    m_usetDisconnectedThisTime.erase (pUser->GetUsername ());
 }
 
 void CSrvUserMgr::AddValidUser(CSrvUser *pUser)
@@ -125,11 +125,11 @@ void CSrvUserMgr::RemoveValidUser(CSrvUser *pUser)
 
 void CSrvUserMgr::RemoveLoginedUser(CSrvUser *pUser)
 {
-    m_usetLoginedUserName.erase (pUser->GetUserName ());
+    m_usetLoginedUserName.erase (pUser->GetUsername ());
     if ( m_usetLoginedUser.erase (pUser) )
     {
-        m_usetDisconnectedThisTime.insert ( pUser->GetUserName () );
-        m_usetLoginedThisTime.erase (pUser->GetUserName ());
+        m_usetDisconnectedThisTime.insert ( pUser->GetUsername () );
+        m_usetLoginedThisTime.erase (pUser->GetUsername ());
     }
 }
 

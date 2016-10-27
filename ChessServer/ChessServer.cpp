@@ -4,7 +4,7 @@
 #include "SrvUser/SrvUserMgr.h"
 #include "SrvUser/SrvUser.h"
 #include "DBThread/DBThreadMgr.h"
-#include <sys/signal.h>
+#include <signal.h>
 
 namespace chess
 {
@@ -32,7 +32,7 @@ void CChessServer::SetQuitFlag()
 
 void CChessServer::SetupSignals()
 {
-    const int arrQuitSignals[]= {SIGHUP, SIGINT, SIGTERM};
+    const int arrQuitSignals[]= { SIGINT, SIGTERM};
 
     for(auto i : arrQuitSignals)
     {
@@ -42,7 +42,7 @@ void CChessServer::SetupSignals()
 
 bool CChessServer::InitAll()
 {
-    return g_pSrvConfig->Init ("./chess_config.ini") &&
+    return g_pSrvConfig->Init ("E:/chess_config.ini") &&
             g_pSrvUserMgr->Init ( g_pSrvConfig->GetMaxUserCount () ) &&
             g_pDBThreadMgr->Init ()&&
             InitNetworkLib() ;

@@ -18,6 +18,7 @@ public:
 };
 
 #define g_pDBThreadMgr chess::CDBThreadMgr::Instance ()
+
 }
 
 #endif // DBTHREADMGR_H

@@ -4,7 +4,11 @@
 #include "CSProtol.h"
 #include "RoSpace/RoTypes.h"
 #include "CSProtol.Serialize.hpp"
+#ifdef WIN32
+#include <winsock2.h>
+#else
 #include <arpa/inet.h>
+#endif
 
 namespace chess
 {
